@@ -3,7 +3,7 @@
 ## Notes: Companion addon to ZoneTimer. Displays a per-zone tally of total time and gold in a single window.
 ## Dependencies: ZoneTimer
 ## Version: 1.3a
-## Author: alnarez
+## Author: Alniarez
 
 Core.lua
 UI.lua
