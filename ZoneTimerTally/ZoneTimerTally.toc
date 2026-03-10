@@ -1,8 +1,8 @@
-## Interface: 110207, 120000
+## Interface: 110207, 120001
 ## Title: ZoneTimer Tally
 ## Notes: Companion addon to ZoneTimer. Displays a per-zone tally of total time and gold in a single window.
 ## Dependencies: ZoneTimer
-## Version: 1.3a
+## Version: 1.3b
 ## Author: Alniarez
 
 Core.lua
