@@ -10,70 +10,33 @@ local UpdateList
 -- Main frame
 --------------------------------------------------
 
-local frame = CreateFrame("Frame", "ZoneTimerTallyFrame", UIParent, "BackdropTemplate")
-frame:SetSize(520, 520)
-frame:SetPoint("CENTER")
-frame:SetBackdrop({
-    bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-    edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Gold-Border",
-    edgeSize = 32,
-    insets = { left = 8, right = 8, top = 8, bottom = 8 }
+local frame = AlnUI:CreateDialog({
+    name       = "ZoneTimerTallyFrame",
+    title      = "ZoneTimer Tally",
+    titleWidth = 300,
+    width      = 520,
+    height     = 520,
 })
-frame:SetMovable(true)
-frame:EnableMouse(true)
-frame:RegisterForDrag("LeftButton")
-frame:SetScript("OnDragStart", frame.StartMoving)
-frame:SetScript("OnDragStop", frame.StopMovingOrSizing)
-frame:Hide()
-
---------------------------------------------------
--- Title
---------------------------------------------------
-
-local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-title:SetPoint("TOP", 0, -12)
-title:SetText("ZoneTimer Tally")
-
---------------------------------------------------
--- Close button
---------------------------------------------------
-
-local closeButton = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
-closeButton:SetPoint("TOPRIGHT", -10, -10)
 
 --------------------------------------------------
 -- Column headers
 --------------------------------------------------
 
-local headerZone = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-headerZone:SetPoint("TOPLEFT", frame, "TOPLEFT", 24, -44)
-headerZone:SetWidth(210)
-headerZone:SetJustifyH("LEFT")
-headerZone:SetText("Zone")
-
-local headerTime = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-headerTime:SetPoint("LEFT", headerZone, "RIGHT", 0, 0)
-headerTime:SetWidth(120)
-headerTime:SetJustifyH("RIGHT")
-headerTime:SetText("Time")
-
-local headerGold = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-headerGold:SetPoint("LEFT", headerTime, "RIGHT", 6, 0)
-headerGold:SetWidth(130)
-headerGold:SetJustifyH("RIGHT")
-headerGold:SetText("Gold")
+AlnUI:CreateColumnRow(frame, { font = "GameFontNormal", x = 24, y = -44 }, {
+    { text = "Zone", width = 210, justify = "LEFT" },
+    { text = "Time", width = 120, justify = "RIGHT" },
+    { text = "Gold", width = 130, justify = "RIGHT", gap = 6 },
+})
 
 --------------------------------------------------
 -- Scroll frame
 --------------------------------------------------
 
-local scroll = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
-scroll:SetPoint("TOPLEFT", 18, -62)
-scroll:SetPoint("BOTTOMRIGHT", -36, 50)
-
-local content = CreateFrame("Frame", nil, scroll)
-content:SetSize(360, 400)
-scroll:SetScrollChild(content)
+local scroll, content = AlnUI:CreateScrollFrame(frame, {
+    x1 = 18,  y1 = -62,
+    x2 = -36, y2 = 50,
+    contentWidth = 360, contentHeight = 400,
+})
 
 --------------------------------------------------
 -- Export button
@@ -131,56 +94,34 @@ function UpdateList()
     local totalGold = 0
 
     for i, entry in ipairs(data) do
-        local y = startY - (i - 1) * rowHeight
+        local y        = startY - (i - 1) * rowHeight
+        local goldText = ZTT:ColorGold(ZTT:FormatGold(entry.gold))
 
-        -- Zone column
-        local zoneFS = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        zoneFS:SetPoint("TOPLEFT", 0, y)
-        zoneFS:SetWidth(210)
-        zoneFS:SetJustifyH("LEFT")
-        zoneFS:SetWordWrap(false)
-        zoneFS:SetText(entry.zone)
+        local cols = AlnUI:CreateColumnRow(content, { y = y }, {
+            { text = entry.zone,                                 width = 210, justify = "LEFT",  wordWrap = false },
+            { text = ZTT:ColorTime(ZTT:FormatTime(entry.time)), width = 120, justify = "RIGHT" },
+            { text = goldText,                                   width = 130, justify = "RIGHT", wordWrap = false, gap = 6 },
+        })
 
-        zoneFS:SetScript("OnEnter", function(self)
+        cols[1]:SetScript("OnEnter", function(self)
             if self:IsTruncated() then
                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                 GameTooltip:SetText(entry.zone, 1, 1, 1, true)
                 GameTooltip:Show()
             end
         end)
-        zoneFS:SetScript("OnLeave", GameTooltip_Hide)
+        cols[1]:SetScript("OnLeave", GameTooltip_Hide)
 
-        table.insert(rows, zoneFS)
-
-        -- Time column
-        local timeFS = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        timeFS:SetPoint("LEFT", zoneFS, "RIGHT", 0, 0)
-        timeFS:SetWidth(120)
-        timeFS:SetJustifyH("RIGHT")
-        timeFS:SetText(ZTT:ColorTime(ZTT:FormatTime(entry.time)))
-
-        table.insert(rows, timeFS)
-
-        -- Gold column
-        local goldText = ZTT:ColorGold(ZTT:FormatGold(entry.gold))
-
-        local goldFS = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        goldFS:SetPoint("LEFT", timeFS, "RIGHT", 6, 0)
-        goldFS:SetWidth(130)
-        goldFS:SetJustifyH("RIGHT")
-        goldFS:SetWordWrap(false)
-        goldFS:SetText(goldText)
-
-        goldFS:SetScript("OnEnter", function(self)
+        cols[3]:SetScript("OnEnter", function(self)
             if self:IsTruncated() then
                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                 GameTooltip:SetText(goldText, 1, 1, 1, true)
                 GameTooltip:Show()
             end
         end)
-        goldFS:SetScript("OnLeave", GameTooltip_Hide)
+        cols[3]:SetScript("OnLeave", GameTooltip_Hide)
 
-        table.insert(rows, goldFS)
+        for _, fs in ipairs(cols) do table.insert(rows, fs) end
 
         totalTime = totalTime + entry.time
         totalGold = totalGold + entry.gold
