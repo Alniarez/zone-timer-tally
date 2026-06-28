@@ -151,3 +151,14 @@ function ZoneTimerTally:GenerateCSV()
 
     return table.concat(lines, "\n")
 end
+
+-- Deprecation warning ----------------------------
+
+local warnFrame = CreateFrame("Frame")
+warnFrame:RegisterEvent("ADDON_LOADED")
+warnFrame:SetScript("OnEvent", function(self, event, addonName)
+    if addonName == "ZoneTimerTally" then
+        print("|cffff4444[ZoneTimerTally]|r This addon is deprecated. Please update to https://www.curseforge.com/wow/addons/zonetimer-redux")
+        self:UnregisterEvent("ADDON_LOADED")
+    end
+end)
