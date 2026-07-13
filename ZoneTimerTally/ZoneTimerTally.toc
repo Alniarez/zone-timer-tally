@@ -1,4 +1,4 @@
-## Interface: 110207, 120001
+## Interface: 120007
 ## Title: ZoneTimer Tally
 ## Notes: Please update to "ZoneTimer Redux" from https://www.curseforge.com/wow/addons/zonetimer-redux. Companion addon to ZoneTimer. Displays a per-zone tally of total time and gold in a single window.
 ## Dependencies: ZoneTimer
