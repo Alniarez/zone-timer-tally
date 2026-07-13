@@ -158,7 +158,7 @@ local warnFrame = CreateFrame("Frame")
 warnFrame:RegisterEvent("ADDON_LOADED")
 warnFrame:SetScript("OnEvent", function(self, event, addonName)
     if addonName == "ZoneTimerTally" then
-        print("|cffff4444[ZoneTimerTally]|r This addon is deprecated. Please update to https://www.curseforge.com/wow/addons/zonetimer-redux")
+        print("|cffff4444[ZoneTimerTally]|r This addon is deprecated. Please update to https://www.curseforge.com/wow/addons/zonetimer-redux. Check the instructions at the end of the addon description to learn how to import your current data to the new addon.")
         self:UnregisterEvent("ADDON_LOADED")
     end
 end)
